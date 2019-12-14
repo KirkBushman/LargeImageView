@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SampleApp</string>
+
+    <string name="main_title">Sample Activities</string>
+
+    <string name="bttn_basic">Basic</string>
+    <string name="bttn_anim">Animation</string>
+</resources>

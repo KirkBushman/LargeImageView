@@ -1,0 +1,36 @@
+*.iml
+
+#built applications
+*.apk
+*.ap_
+
+#Files for the VM
+*.dex
+
+#reports
+*.xml
+
+#credentials
+/lib/src/debug/res/xml/credentials.xml
+/sampleapp/src/main/res/xml/credentials.xml
+
+/bin
+/gen
+/out
+
+.gradle
+!gradle-wrapper.jar
+/build
+
+/local.properties
+
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild

@@ -2,6 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.kirkbushman.largeimageview.sampleapp">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,14 +22,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".BasicActivity"
+        <activity android:name=".activities.BasicActivity"
             android:parentActivityName=".MainActivity" />
 
-        <activity android:name=".AnimFirstActivity"
-            android:parentActivityName=".MainActivity" />
+        <activity android:name=".activities.AnimFirstActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/TransitionTheme" />
 
-        <activity android:name=".AnimSecondActivity"
-            android:parentActivityName=".AnimFirstActivity" />
+        <activity android:name=".activities.AnimSecondActivity"
+            android:parentActivityName=".activities.AnimFirstActivity"
+            android:theme="@style/TransitionTheme" />
 
 
     </application>

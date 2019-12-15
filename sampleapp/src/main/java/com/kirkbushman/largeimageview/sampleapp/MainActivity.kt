@@ -3,6 +3,8 @@ package com.kirkbushman.largeimageview.sampleapp
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.kirkbushman.largeimageview.sampleapp.activities.AnimFirstActivity
+import com.kirkbushman.largeimageview.sampleapp.activities.BasicActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

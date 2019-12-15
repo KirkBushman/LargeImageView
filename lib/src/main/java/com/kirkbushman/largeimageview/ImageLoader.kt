@@ -5,11 +5,25 @@ import android.view.View
 
 interface ImageLoader {
 
-    fun getThumbnailView(context: Context): View
+    /**
+     * Receive from the user the view that binds to thumbnailView
+     */
+    fun getThumbnailView(context: Context): View?
+
+    /**
+     * Load the image to the View provided, the method is up to the user
+     */
     fun loadThumbnail(view: View, url: String)
 
-    fun preloadSource(url: String)
+    /**
+     * Receive from the user the view that binds to errorView
+     */
+    fun getErrorView(context: Context): View?
 
-    // fun onImageDownloaded(onLoaded: () -> Unit)
-    // fun onImageErrored(onErrored: () -> Unit)
+    /**
+     * Start preloading the large image as a java File,
+     * the method used is up to the user, use the callback to report if the image is available
+     * or the fetching went wrong.
+     */
+    fun preloadSource(url: String, callback: ImageReadyCallback)
 }

@@ -9,10 +9,27 @@ show an error view in case something goes wrong.
 LIV makes it easy to use the subsampling, zooming and gestures capabilities of SSIV in combination with a transition or shared-element-transition,
 allowing you to animate the thumbnail and delay the loading of source image until the animation is complete.
 
+Check out the sample app, to learn how to make it work with [Glide](https://github.com/bumptech/glide).
+
+
+### How to install.
+
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.KirkBushman:LargeImageView:Tag'
+}
+```
 
 ### Usage
 
-To manage the beahviour of LIV you must provide an ImageLoader, like so:
+To manage the behaviour of LIV you must provide an ImageLoader, like so:
 
 ```
 
@@ -43,12 +60,11 @@ liv_basic.setImageLoader(object : ImageLoader {
 after doing that, start the process with:
 
 ```
-
 liv.startLoading()
-
 ```
 
 It's that simple!
+
 
 ### License
 This project is licensed under the MIT License

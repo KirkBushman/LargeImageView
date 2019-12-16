@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.IntDef
 import androidx.annotation.UiThread
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -14,8 +15,17 @@ import java.io.File
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class LargeImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private var thumbnailUrl: String? = null
-    private var sourceUrl: String? = null
+    companion object {
+
+        const val SHOWING_NOTHING = 0
+        const val SHOWING_THUMBNAIL = 1
+        const val SHOWING_ERROR = 2
+        const val SHOWING_SOURCE = 3
+
+        @IntDef(SHOWING_NOTHING, SHOWING_THUMBNAIL, SHOWING_ERROR, SHOWING_SOURCE)
+        @Retention(AnnotationRetention.SOURCE)
+        annotation class State
+    }
 
     private var thumbnailView: View? = null
     private var errorView: View? = null
@@ -24,7 +34,10 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     private var loader: ImageLoader? = null
     private var viewsShownListener: OnViewsShownListener? = null
 
-    private var showImageWhenAvailable = true
+    @State
+    private var state: Int = SHOWING_NOTHING
+
+    private var showImageWhenAvailable: Boolean
 
     init {
 
@@ -39,8 +52,21 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         this.loader = loader
     }
 
+    fun getThumbnailView(): View? {
+        return thumbnailView
+    }
+
+    fun getErrorView(): View? {
+        return errorView
+    }
+
     fun getSsiv(): SubsamplingScaleImageView? {
         return sourceView
+    }
+
+    @State
+    fun getState(): Int {
+        return state
     }
 
     fun getShowImageWhenAvailable(): Boolean {
@@ -55,13 +81,6 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         this.viewsShownListener = viewsShownListener
     }
 
-    fun setImage(thumbnailUrl: String?, sourceUrl: String?) {
-        this.thumbnailUrl = thumbnailUrl
-        this.sourceUrl = sourceUrl
-
-        startLoading()
-    }
-
     fun triggerShowImage() {
 
         if (showImageWhenAvailable) {
@@ -71,7 +90,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         showImage()
     }
 
-    private fun startLoading() {
+    fun startLoading(showThumbnail: Boolean = true, showSource: Boolean = true) {
 
         clearViews()
 
@@ -79,24 +98,24 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
 
             // show the thumbnail in the meantime,
             // while the large image is loading in the background.
-            thumbnailUrl?.let { thumbUrl ->
+            if (showThumbnail) {
 
                 thumbnailView = loader.getThumbnailView(context)
                 thumbnailView?.let { thumbView ->
 
-                    loader.loadThumbnail(thumbView, thumbUrl)
+                    loader.loadThumbnail(thumbView)
 
                     showThumbnail()
                 }
             }
 
             // start loading in the background the real image.
-            sourceUrl?.let { url ->
+            if (showSource) {
 
                 sourceView = SubsamplingScaleImageView(context)
                 sourceView?.let { view ->
 
-                    loader.preloadSource(url, object : ImageReadyCallback {
+                    loader.preloadSource(object : ImageReadyCallback {
 
                         // if the image is ready set it in the SSIV
                         //
@@ -105,11 +124,11 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
                         //
                         // otherwise wait for triggerShowImage() to get called.
                         //
-                        override fun onImageReady(file: File, forceImageShow: Boolean) {
+                        override fun onImageReady(file: File) {
 
                             view.setImage(ImageSource.uri(Uri.fromFile(file)))
 
-                            if (showImageWhenAvailable || forceImageShow) {
+                            if (showImageWhenAvailable) {
                                 showImage()
                             }
                         }
@@ -129,9 +148,12 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun clearViews() {
+
         if (childCount > 0) {
             removeAllViews()
         }
+
+        state = SHOWING_NOTHING
 
         thumbnailView = null
         errorView = null
@@ -141,81 +163,77 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     @UiThread
     private fun showThumbnail() {
 
-        if (thumbnailView != null) {
-            if (findViewById<View>(thumbnailView!!.id) == null) {
-
-                addView(
-                    thumbnailView,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            }
-
-            viewsShownListener?.onThumbnailViewShown(thumbnailView!!)
+        if (state == SHOWING_THUMBNAIL) {
+            return
         }
 
-        if (thumbnailView?.visibility != View.VISIBLE) {
-            thumbnailView?.visibility = View.VISIBLE
+        thumbnailView?.let {
+
+            addChildIfNotPresent(it)
+            enableChildView(it)
+
+            state = SHOWING_THUMBNAIL
+
+            viewsShownListener?.onThumbnailViewShown(it)
         }
     }
 
     @UiThread
     private fun showErrorView() {
 
-        if (errorView != null) {
-            if (findViewById<View>(errorView!!.id) == null) {
-
-                addView(
-                    errorView,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            }
-
-            viewsShownListener?.onErrorViewShown(errorView!!)
+        if (state == SHOWING_ERROR) {
+            return
         }
 
-        if (errorView?.visibility != View.VISIBLE) {
-            errorView?.visibility = View.VISIBLE
-        }
+        errorView?.let {
 
-        if (childCount > 0) {
+            addChildIfNotPresent(it)
+            enableChildView(it)
 
-            postDelayed({
+            state = SHOWING_ERROR
 
-                sourceView?.visibility = View.GONE
-                thumbnailView?.visibility = View.GONE
-            }, 1000)
+            viewsShownListener?.onErrorViewShown(it)
         }
     }
 
     @UiThread
     private fun showImage() {
 
-        if (sourceView != null) {
-            if (findViewById<View>(sourceView!!.id) == null) {
-
-                addView(
-                    sourceView,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            }
-
-            viewsShownListener?.onImageViewShown(sourceView!!)
+        if (state == SHOWING_SOURCE) {
+            return
         }
 
-        if (sourceView?.visibility != View.VISIBLE) {
-            sourceView?.visibility = View.VISIBLE
+        sourceView?.let {
+
+            addChildIfNotPresent(it)
+            enableChildView(it)
+
+            state = SHOWING_SOURCE
+
+            viewsShownListener?.onImageViewShown(it)
+        }
+    }
+
+    private fun addChildIfNotPresent(view: View) {
+
+        if (findViewById<View>(view.id) == null) {
+
+            addView(
+                view,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+    }
+
+    private fun enableChildView(view: View) {
+
+        if (view.visibility != View.VISIBLE) {
+            view.visibility = View.VISIBLE
         }
 
         if (childCount > 0) {
-
-            postDelayed({
-
-                errorView?.visibility = View.GONE
-                thumbnailView?.visibility = View.GONE
-            }, 1000)
+            view.bringToFront()
         }
     }
 }

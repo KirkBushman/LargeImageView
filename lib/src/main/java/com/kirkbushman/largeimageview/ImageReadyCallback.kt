@@ -7,7 +7,7 @@ interface ImageReadyCallback {
     /**
      * The large image preloaded is ready, as a java File Object
      */
-    fun onImageReady(file: File, forceImageShow: Boolean = false)
+    fun onImageReady(file: File)
 
     /**
      * The process did return an error.

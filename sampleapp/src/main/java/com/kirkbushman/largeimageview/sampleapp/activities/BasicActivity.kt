@@ -41,9 +41,9 @@ class BasicActivity : AppCompatActivity() {
                 return ImageView(context)
             }
 
-            override fun loadThumbnail(view: View, url: String) {
+            override fun loadThumbnail(view: View) {
                 glide.asBitmap()
-                    .load(url)
+                    .load(THUMB_URL)
                     .into(view as ImageView)
             }
 
@@ -58,7 +58,7 @@ class BasicActivity : AppCompatActivity() {
                 return errorText
             }
 
-            override fun preloadSource(url: String, callback: ImageReadyCallback) {
+            override fun preloadSource(callback: ImageReadyCallback) {
 
                 var file: File? = null
 
@@ -67,7 +67,7 @@ class BasicActivity : AppCompatActivity() {
                     try {
 
                         file = glide.downloadOnly()
-                            .load(url)
+                            .load(SOURCE_URL)
                             .submit()
                             .get()
                     } catch (ex: Exception) {
@@ -99,9 +99,6 @@ class BasicActivity : AppCompatActivity() {
             }
         })
 
-        liv_basic.setImage(
-            THUMB_URL,
-            SOURCE_URL
-        )
+        liv_basic.startLoading()
     }
 }

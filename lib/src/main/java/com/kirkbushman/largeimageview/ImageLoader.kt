@@ -13,7 +13,7 @@ interface ImageLoader {
     /**
      * Load the image to the View provided, the method is up to the user
      */
-    fun loadThumbnail(view: View, url: String)
+    fun loadThumbnail(view: View)
 
     /**
      * Receive from the user the view that binds to errorView
@@ -25,5 +25,5 @@ interface ImageLoader {
      * the method used is up to the user, use the callback to report if the image is available
      * or the fetching went wrong.
      */
-    fun preloadSource(url: String, callback: ImageReadyCallback)
+    fun preloadSource(callback: ImageReadyCallback)
 }

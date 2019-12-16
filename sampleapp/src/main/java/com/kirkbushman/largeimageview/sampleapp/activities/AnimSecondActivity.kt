@@ -5,12 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.transition.Transition
-import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.transition.doOnEnd
 import com.bumptech.glide.Glide
 import com.kirkbushman.largeimageview.ImageLoader
 import com.kirkbushman.largeimageview.ImageReadyCallback
@@ -21,7 +19,7 @@ import kotlinx.android.synthetic.main.activity_anim_second.*
 import java.io.File
 import java.lang.Exception
 
-class AnimSecondActivity : AppCompatActivity() {
+class AnimSecondActivity : BaseBackActivity() {
 
     companion object {
 
@@ -46,33 +44,16 @@ class AnimSecondActivity : AppCompatActivity() {
 
     private val glide by lazy { Glide.with(this) }
 
-    private var transitionEnded = false
-    private var imageDownloaded = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_anim_second)
 
         if (Build.VERSION.SDK_INT >= 21) {
-            window.sharedElementEnterTransition.addListener(object : Transition.TransitionListener {
 
-                override fun onTransitionStart(transition: Transition?) {}
-                override fun onTransitionCancel(transition: Transition?) {}
-                override fun onTransitionPause(transition: Transition?) {}
-                override fun onTransitionResume(transition: Transition?) {}
+            window.sharedElementEnterTransition.doOnEnd {
 
-                override fun onTransitionEnd(transition: Transition?) {
-
-                    transitionEnded = true
-
-                    if (imageDownloaded) {
-
-                        liv.triggerShowImage()
-                    }
-
-                    window.sharedElementEnterTransition.removeListener(this)
-                }
-            })
+                liv.triggerShowImage()
+            }
         }
 
         liv.setImageLoader(object : ImageLoader {
@@ -81,15 +62,15 @@ class AnimSecondActivity : AppCompatActivity() {
                 return ImageView(context)
             }
 
-            override fun loadThumbnail(view: View, url: String) {
-                glide.loadThumbnail(url, view as ImageView)
+            override fun loadThumbnail(view: View) {
+                glide.loadThumbnail(thumbUrl, view as ImageView)
             }
 
             override fun getErrorView(context: Context): View? {
                 return null
             }
 
-            override fun preloadSource(url: String, callback: ImageReadyCallback) {
+            override fun preloadSource(callback: ImageReadyCallback) {
 
                 var file: File? = null
 
@@ -98,7 +79,7 @@ class AnimSecondActivity : AppCompatActivity() {
                     try {
 
                         file = glide.downloadOnly()
-                            .load(url)
+                            .load(sourceUrl)
                             .submit()
                             .get()
                     } catch (ex: Exception) {
@@ -107,42 +88,21 @@ class AnimSecondActivity : AppCompatActivity() {
                 }, onPost = {
 
                     if (file != null) {
-                        callback.onImageReady(file!!, transitionEnded)
+                        callback.onImageReady(file!!)
                     } else {
                         callback.onImageErrored()
                     }
-
-                    imageDownloaded = true
                 })
             }
         })
 
-        liv.setImage(thumbUrl, sourceUrl)
+        liv.startLoading()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun doBeforeFinish() {
 
-        when (item.itemId) {
-            android.R.id.home -> {
-                supportFinishAfterTransition()
-                return true
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackPressed() {
-        setResultAndFinish()
-    }
-
-    override fun onNavigateUp(): Boolean {
-        setResultAndFinish()
-        return true
-    }
-
-    private fun setResultAndFinish() {
         if (Build.VERSION.SDK_INT >= 21) {
+
             finishAfterTransition()
         }
     }

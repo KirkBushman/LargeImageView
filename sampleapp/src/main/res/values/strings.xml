@@ -5,6 +5,11 @@
 
     <string name="image_transition_name">image_transition_name</string>
 
+    <string name="bttn_scale_min">Min Scale</string>
+    <string name="bttn_scale_half">Half Scale</string>
+    <string name="bttn_scale_max">Max Scale</string>
+
     <string name="bttn_basic">Basic</string>
+    <string name="bttn_zoom">Zoom</string>
     <string name="bttn_anim">Animation</string>
 </resources>

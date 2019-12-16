@@ -43,6 +43,14 @@
             />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/bttn_zoom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bttn_zoom"
+            android:layout_margin="16dp"
+            />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/bttn_anim"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

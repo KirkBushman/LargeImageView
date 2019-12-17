@@ -5,16 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.transition.Transition
 import android.view.View
 import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.transition.doOnEnd
 import com.bumptech.glide.Glide
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.kirkbushman.largeimageview.ImageLoader
 import com.kirkbushman.largeimageview.ImageReadyCallback
 import com.kirkbushman.largeimageview.sampleapp.R
+import com.kirkbushman.largeimageview.sampleapp.utils.SimpleTransitionListener
 import com.kirkbushman.largeimageview.sampleapp.utils.doAsync
 import com.kirkbushman.largeimageview.sampleapp.utils.loadThumbnail
+import com.kirkbushman.largeimageview.scaleMin
 import kotlinx.android.synthetic.main.activity_anim_second.*
 import java.io.File
 import java.lang.Exception
@@ -25,6 +28,8 @@ class AnimSecondActivity : BaseBackActivity() {
 
         private const val PARAM_THUMB = "intent_param_thumb"
         private const val PARAM_SOURCE = "intent_param_source"
+
+        private const val ANIM_DURATION = 300L
 
         fun start(activity: Activity, imageView: ImageView, thumbUrl: String, sourceUrl: String) {
             val intent = Intent(activity, AnimSecondActivity::class.java)
@@ -50,10 +55,15 @@ class AnimSecondActivity : BaseBackActivity() {
 
         if (Build.VERSION.SDK_INT >= 21) {
 
-            window.sharedElementEnterTransition.doOnEnd {
+            window.sharedElementEnterTransition.addListener(object : SimpleTransitionListener() {
 
-                liv.triggerShowImage()
-            }
+                override fun onTransitionEnd(transition: Transition?) {
+
+                    liv.triggerShowImage()
+
+                    window.sharedElementEnterTransition.removeListener(this)
+                }
+            })
         }
 
         liv.setImageLoader(object : ImageLoader {
@@ -103,7 +113,32 @@ class AnimSecondActivity : BaseBackActivity() {
 
         if (Build.VERSION.SDK_INT >= 21) {
 
-            finishAfterTransition()
+            val ssiv = liv.getSsiv()
+            if (ssiv?.scale == ssiv?.minScale) {
+
+                finishAfterTransition()
+            } else {
+
+                ssiv?.scaleMin(ANIM_DURATION, object : SubsamplingScaleImageView.OnAnimationEventListener {
+
+                    override fun onComplete() {
+                        finishAfterTransition()
+                    }
+
+                    override fun onInterruptedByNewAnim() {
+                        finishAfterTransition()
+                    }
+
+                    override fun onInterruptedByUser() {
+                        finishAfterTransition()
+                    }
+                })
+            }
         }
+    }
+
+    override fun finishAfterTransition() {
+        liv.showThumbnailView()
+        super.finishAfterTransition()
     }
 }

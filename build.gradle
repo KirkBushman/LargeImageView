@@ -8,7 +8,7 @@ buildscript {
         kotlin_ver = '1.3.61'
         ssiv_ver = '3.11.0'
         glide_ver = '4.10.0'
-        constr_ver = '2.0.0-beta3'
+        constr_ver = '2.0.0-beta4'
         mdc_ver = '1.1.0-beta02'
         leakcanary_ver = '2.0'
     }

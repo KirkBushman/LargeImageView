@@ -87,7 +87,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
             return
         }
 
-        showImage()
+        showSourceView(false)
     }
 
     fun startLoading(showThumbnail: Boolean = true, showSource: Boolean = true) {
@@ -100,19 +100,21 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
             // while the large image is loading in the background.
             if (showThumbnail) {
 
-                thumbnailView = loader.getThumbnailView(context)
+                // remember to generate view id
+                thumbnailView = buildThumbnailView()
                 thumbnailView?.let { thumbView ->
 
                     loader.loadThumbnail(thumbView)
 
-                    showThumbnail()
+                    showThumbnailView()
                 }
             }
 
             // start loading in the background the real image.
             if (showSource) {
 
-                sourceView = SubsamplingScaleImageView(context)
+                // remember to generate view id
+                sourceView = buildSourceView()
                 sourceView?.let { view ->
 
                     loader.preloadSource(object : ImageReadyCallback {
@@ -129,16 +131,18 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
                             view.setImage(ImageSource.uri(Uri.fromFile(file)))
 
                             if (showImageWhenAvailable) {
-                                showImage()
+                                showSourceView(false)
                             }
                         }
 
                         // if something went wrong, show the error view.
                         override fun onImageErrored() {
-                            errorView = loader.getErrorView(context)
+
+                            // remember to generate view id
+                            errorView = buildErrorView()
                             errorView?.let { _ ->
 
-                                showErrorView()
+                                showErrorView(false)
                             }
                         }
                     })
@@ -161,60 +165,87 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     @UiThread
-    private fun showThumbnail() {
+    fun showThumbnailView(disableOtherViews: Boolean = true) {
 
         if (state == SHOWING_THUMBNAIL) {
             return
         }
 
+        if (thumbnailView == null) {
+            thumbnailView = buildThumbnailView()
+        }
+
         thumbnailView?.let {
 
-            addChildIfNotPresent(it)
-            enableChildView(it)
+            addAndEnableChild(it)
 
             state = SHOWING_THUMBNAIL
+
+            if (disableOtherViews) {
+
+                errorView?.visibility = View.GONE
+                sourceView?.visibility = View.GONE
+            }
 
             viewsShownListener?.onThumbnailViewShown(it)
         }
     }
 
     @UiThread
-    private fun showErrorView() {
+    fun showErrorView(disableOtherViews: Boolean = true) {
 
         if (state == SHOWING_ERROR) {
             return
         }
 
+        if (errorView == null) {
+            errorView = buildErrorView()
+        }
+
         errorView?.let {
 
-            addChildIfNotPresent(it)
-            enableChildView(it)
+            addAndEnableChild(it)
 
             state = SHOWING_ERROR
+
+            if (disableOtherViews) {
+
+                thumbnailView?.visibility = View.GONE
+                sourceView?.visibility = View.GONE
+            }
 
             viewsShownListener?.onErrorViewShown(it)
         }
     }
 
     @UiThread
-    private fun showImage() {
+    fun showSourceView(disableOtherViews: Boolean = true) {
 
         if (state == SHOWING_SOURCE) {
             return
         }
 
+        if (sourceView == null) {
+            sourceView = buildSourceView()
+        }
+
         sourceView?.let {
 
-            addChildIfNotPresent(it)
-            enableChildView(it)
+            addAndEnableChild(it)
 
             state = SHOWING_SOURCE
+
+            if (disableOtherViews) {
+
+                thumbnailView?.visibility = View.GONE
+                errorView?.visibility = View.GONE
+            }
 
             viewsShownListener?.onImageViewShown(it)
         }
     }
 
-    private fun addChildIfNotPresent(view: View) {
+    private fun addAndEnableChild(view: View) {
 
         if (findViewById<View>(view.id) == null) {
 
@@ -224,9 +255,6 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
-    }
-
-    private fun enableChildView(view: View) {
 
         if (view.visibility != View.VISIBLE) {
             view.visibility = View.VISIBLE
@@ -235,5 +263,26 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         if (childCount > 0) {
             view.bringToFront()
         }
+    }
+
+    private fun buildThumbnailView(): View? {
+        val view = loader?.getThumbnailView(context)
+        view?.id = View.generateViewId()
+
+        return view
+    }
+
+    private fun buildSourceView(): SubsamplingScaleImageView {
+        val view = SubsamplingScaleImageView(context)
+        view.id = View.generateViewId()
+
+        return view
+    }
+
+    private fun buildErrorView(): View? {
+        val view = loader?.getErrorView(context)
+        view?.id = View.generateViewId()
+
+        return view
     }
 }

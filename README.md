@@ -33,7 +33,7 @@ To manage the behaviour of LIV you must provide an ImageLoader, like so:
 
 ```
 
-liv_basic.setImageLoader(object : ImageLoader {
+liv.setImageLoader(object : ImageLoader {
 
     override fun getThumbnailView(context: Context): View {
         ...

@@ -5,36 +5,36 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/bttn_min_scale"
+        android:id="@+id/bttn_show_thumbnail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="@string/bttn_scale_min"
-        app:layout_constraintEnd_toStartOf="@+id/bttn_half_scale"
+        android:text="@string/bttn_show_thumb"
+        app:layout_constraintEnd_toStartOf="@+id/bttn_show_source"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/bttn_half_scale"
+        android:id="@+id/bttn_show_source"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="@string/bttn_scale_half"
-        app:layout_constraintEnd_toStartOf="@+id/bttn_max_scale"
+        android:text="@string/bttn_show_source"
+        app:layout_constraintEnd_toStartOf="@+id/bttn_show_error"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/bttn_min_scale"
+        app:layout_constraintStart_toEndOf="@+id/bttn_show_thumbnail"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/bttn_max_scale"
+        android:id="@+id/bttn_show_error"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="@string/bttn_scale_max"
+        android:text="@string/bttn_show_error"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/bttn_half_scale"
+        app:layout_constraintStart_toEndOf="@+id/bttn_show_source"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.kirkbushman.largeimageview.LargeImageView
@@ -42,7 +42,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:showImageWhenAvailable="true"
-        app:layout_constraintTop_toBottomOf="@id/bttn_half_scale"
+        app:layout_constraintTop_toBottomOf="@id/bttn_show_source"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

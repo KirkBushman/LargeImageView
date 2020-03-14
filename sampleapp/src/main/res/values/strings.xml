@@ -17,4 +17,5 @@
     <string name="bttn_control">Image Control</string>
     <string name="bttn_zoom">Zoom</string>
     <string name="bttn_anim">Animation</string>
+    <string name="bttn_anim_coil">Animation-Coil</string>
 </resources>

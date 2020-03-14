@@ -9,6 +9,7 @@ import android.transition.Transition
 import android.view.View
 import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
+import coil.api.load
 import com.bumptech.glide.Glide
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.kirkbushman.largeimageview.ImageLoader
@@ -29,12 +30,15 @@ class AnimSecondActivity : BaseBackActivity() {
         private const val PARAM_THUMB = "intent_param_thumb"
         private const val PARAM_SOURCE = "intent_param_source"
 
+        private const val FLAG_USE_COIL = "intent_extra_flag_use_coil2"
+
         private const val ANIM_DURATION = 300L
 
-        fun start(activity: Activity, imageView: ImageView, thumbUrl: String, sourceUrl: String) {
+        fun start(activity: Activity, imageView: ImageView, thumbUrl: String, sourceUrl: String, useCoil: Boolean = false) {
             val intent = Intent(activity, AnimSecondActivity::class.java)
             intent.putExtra(PARAM_THUMB, thumbUrl)
             intent.putExtra(PARAM_SOURCE, sourceUrl)
+            intent.putExtra(FLAG_USE_COIL, useCoil)
 
             val transitionName = activity.resources.getString(R.string.image_transition_name)
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, imageView, transitionName)
@@ -46,6 +50,8 @@ class AnimSecondActivity : BaseBackActivity() {
 
     private val thumbUrl by lazy { intent.getStringExtra(PARAM_THUMB) }
     private val sourceUrl by lazy { intent.getStringExtra(PARAM_SOURCE) }
+
+    private val useCoil by lazy { intent.getBooleanExtra(FLAG_USE_COIL, false) }
 
     private val glide by lazy { Glide.with(this) }
 
@@ -73,7 +79,11 @@ class AnimSecondActivity : BaseBackActivity() {
             }
 
             override fun loadThumbnail(view: View) {
-                glide.loadThumbnail(thumbUrl, view as ImageView)
+                if (useCoil) {
+                    (view as ImageView).load(thumbUrl)
+                } else {
+                    glide.loadThumbnail(thumbUrl, view as ImageView)
+                }
             }
 
             override fun getErrorView(context: Context): View? {

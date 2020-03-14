@@ -1,6 +1,7 @@
 package com.kirkbushman.largeimageview.sampleapp.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -23,6 +24,11 @@ class ZoomActivity : AppCompatActivity() {
         private const val SOURCE_URL = "https://preview.redd.it/c24zusxca3x31.jpg?auto=webp&s=06ec0f3d46494bc3c4afe9596cc57e9810d7719e"
 
         private const val ANIM_DURATION = 400L
+
+        fun start(context: Context) {
+            val intent = Intent(context, ZoomActivity::class.java)
+            context.startActivity(intent)
+        }
     }
 
     private val glide by lazy { Glide.with(this) }

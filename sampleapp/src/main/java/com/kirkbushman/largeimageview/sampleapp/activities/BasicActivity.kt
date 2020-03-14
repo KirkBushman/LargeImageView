@@ -1,6 +1,7 @@
 package com.kirkbushman.largeimageview.sampleapp.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -24,6 +25,11 @@ class BasicActivity : AppCompatActivity() {
 
         private const val SOURCE_URL = "https://external-preview.redd.it/ZcoVuzCSwoXshogcdAPTNsOf0pNCo1FQ6cQ0pqW6A4c.jpg?auto=webp&s=4f7d144d8c6a8da96373ca1b675df140e4c9a0cf"
         private const val THUMB_URL = "https://external-preview.redd.it/ZcoVuzCSwoXshogcdAPTNsOf0pNCo1FQ6cQ0pqW6A4c.jpg?width=320&crop=smart&auto=webp&s=69e043415b9cb786c1e72147faa7acc769b72ba5"
+
+        fun start(context: Context) {
+            val intent = Intent(context, BasicActivity::class.java)
+            context.startActivity(intent)
+        }
     }
 
     private val glide by lazy { Glide.with(this) }

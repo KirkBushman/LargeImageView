@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,6 +63,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/bttn_anim"
+            android:layout_margin="16dp"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bttn_anim_coil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bttn_anim_coil"
             android:layout_margin="16dp"
             />
 

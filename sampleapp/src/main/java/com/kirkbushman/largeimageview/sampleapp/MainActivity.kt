@@ -1,6 +1,5 @@
 package com.kirkbushman.largeimageview.sampleapp
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.kirkbushman.largeimageview.sampleapp.activities.AnimFirstActivity
@@ -17,26 +16,27 @@ class MainActivity : AppCompatActivity() {
 
         bttn_basic.setOnClickListener {
 
-            val intent = Intent(this, BasicActivity::class.java)
-            startActivity(intent)
+            BasicActivity.start(this)
         }
 
         bttn_zoom.setOnClickListener {
 
-            val intent = Intent(this, ZoomActivity::class.java)
-            startActivity(intent)
+            ZoomActivity.start(this)
         }
 
         bttn_control.setOnClickListener {
 
-            val intent = Intent(this, ImageControlActivity::class.java)
-            startActivity(intent)
+            ImageControlActivity.start(this)
         }
 
         bttn_anim.setOnClickListener {
 
-            val intent = Intent(this, AnimFirstActivity::class.java)
-            startActivity(intent)
+            AnimFirstActivity.start(this)
+        }
+
+        bttn_anim_coil.setOnClickListener {
+
+            AnimFirstActivity.start(this, useCoil = true)
         }
     }
 }

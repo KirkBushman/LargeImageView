@@ -1,6 +1,7 @@
 package com.kirkbushman.largeimageview.sampleapp.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -21,6 +22,11 @@ class ImageControlActivity : AppCompatActivity() {
 
         private const val THUMB_URL = "https://preview.redd.it/rqmgi2lmkcm31.jpg?width=320&crop=smart&auto=webp&s=2960f224346941ccb6b01455141a40b6367a62e3"
         private const val SOURCE_URL = "https://preview.redd.it/rqmgi2lmkcm31.jpg?auto=webp&s=db751ffa3a88b2e91de577fa4b1459eb7ef9b7c3"
+
+        fun start(context: Context) {
+            val intent = Intent(context, ImageControlActivity::class.java)
+            context.startActivity(intent)
+        }
     }
 
     private val glide by lazy { Glide.with(this) }

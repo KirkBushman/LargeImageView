@@ -3,17 +3,25 @@
 buildscript {
 
     ext {
-        android_gradle_ver = '4.0.0'
+        android_gradle_ver = '4.0.1'
 
-        kotlin_ver = '1.3.72'
-        ktlint_ver = '0.36.0'
-        ktx_ver = '1.3.0'
+        compile_sdk_ver = 30
+        build_tools_ver = "30.0.2"
+
+        min_sdk_ver = 21
+        target_sdk_ver = 30
+
+        jvm_ver = JavaVersion.VERSION_1_8
+
+        kotlin_ver = '1.4.10'
+        ktlint_ver = '0.39.0'
+        ktx_ver = '1.3.1'
         ssiv_ver = '3.11.2'
         glide_ver = '4.11.0'
         coil_ver = '0.11.0'
-        constr_ver = '2.0.0-beta6'
-        mdc_ver = '1.1.0'
-        leakcanary_ver = '2.3'
+        constr_ver = '2.0.1'
+        mdc_ver = '1.2.1'
+        leakcanary_ver = '2.4'
         test_ver = '1.2.0'
         espresso_ver = '3.2.0'
     }

@@ -70,25 +70,28 @@ class ImageControlActivity : AppCompatActivity() {
 
                 var file: File? = null
 
-                doAsync(doWork = {
+                doAsync(
+                    doWork = {
 
-                    try {
+                        try {
 
-                        file = glide.downloadOnly()
-                            .load(SOURCE_URL)
-                            .submit()
-                            .get()
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
+                            file = glide.downloadOnly()
+                                .load(SOURCE_URL)
+                                .submit()
+                                .get()
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    },
+                    onPost = {
+
+                        if (file != null) {
+                            callback.onImageReady(file!!)
+                        } else {
+                            callback.onImageErrored()
+                        }
                     }
-                }, onPost = {
-
-                    if (file != null) {
-                        callback.onImageReady(file!!)
-                    } else {
-                        callback.onImageErrored()
-                    }
-                })
+                )
             }
         })
 

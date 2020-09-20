@@ -3,6 +3,7 @@ package com.kirkbushman.largeimageview
 import android.content.Context
 import android.net.Uri
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -187,6 +188,8 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
                 sourceView?.visibility = View.GONE
             }
 
+            Log.i("LargeImageView", "Showing thumb view")
+
             viewsShownListener?.onThumbnailViewShown(it)
         }
     }
@@ -240,6 +243,8 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
                 thumbnailView?.visibility = View.GONE
                 errorView?.visibility = View.GONE
             }
+
+            Log.i("LargeImageView", "Showing source view")
 
             viewsShownListener?.onImageViewShown(it)
         }

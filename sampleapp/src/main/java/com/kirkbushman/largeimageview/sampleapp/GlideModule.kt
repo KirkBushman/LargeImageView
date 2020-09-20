@@ -16,12 +16,15 @@ class GlideModule : AppGlideModule() {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val options = RequestOptions()
             .disallowHardwareConfig()
-            .format(if (activityManager.isLowRamDevice)
-                DecodeFormat.PREFER_RGB_565
-            else
-                DecodeFormat.PREFER_ARGB_8888)
+            .format(
+                if (activityManager.isLowRamDevice)
+                    DecodeFormat.PREFER_RGB_565
+                else
+                    DecodeFormat.PREFER_ARGB_8888
+            )
 
-        builder.setLogLevel(Log.VERBOSE)
+        builder
+            .setLogLevel(Log.VERBOSE)
             .setDefaultRequestOptions(options)
     }
 

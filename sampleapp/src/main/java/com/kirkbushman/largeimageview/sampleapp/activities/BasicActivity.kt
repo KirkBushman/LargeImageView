@@ -58,42 +58,47 @@ class BasicActivity : AppCompatActivity() {
 
                 var file: File? = null
 
-                doAsync(doWork = {
+                doAsync(
+                    doWork = {
 
-                    try {
+                        try {
 
-                        file = glide.downloadOnly()
-                            .load(SOURCE_URL)
-                            .submit()
-                            .get()
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
+                            file = glide.downloadOnly()
+                                .load(SOURCE_URL)
+                                .submit()
+                                .get()
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    },
+                    onPost = {
+
+                        if (file != null) {
+                            callback.onImageReady(file!!)
+                        } else {
+                            callback.onImageErrored()
+                        }
                     }
-                }, onPost = {
-
-                    if (file != null) {
-                        callback.onImageReady(file!!)
-                    } else {
-                        callback.onImageErrored()
-                    }
-                })
+                )
             }
         })
 
-        liv_basic.setOnViewShownListener(object : OnViewsShownListener {
+        liv_basic.setOnViewShownListener(
+            object : OnViewsShownListener {
 
-            override fun onThumbnailViewShown(view: View) {
-                showToast("Thumbnail Shown!")
-            }
+                override fun onThumbnailViewShown(view: View) {
+                    showToast("Thumbnail Shown!")
+                }
 
-            override fun onErrorViewShown(view: View) {
-                showToast("Error Shown!")
-            }
+                override fun onErrorViewShown(view: View) {
+                    showToast("Error Shown!")
+                }
 
-            override fun onImageViewShown(view: SubsamplingScaleImageView) {
-                showToast("Image Shown!")
+                override fun onImageViewShown(view: SubsamplingScaleImageView) {
+                    showToast("Image Shown!")
+                }
             }
-        })
+        )
 
         liv_basic.startLoading()
     }

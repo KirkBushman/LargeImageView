@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.transition.Transition
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.kirkbushman.largeimageview.ImageLoader
 import com.kirkbushman.largeimageview.ImageReadyCallback
+import com.kirkbushman.largeimageview.OnViewsShownListener
 import com.kirkbushman.largeimageview.sampleapp.R
 import com.kirkbushman.largeimageview.sampleapp.utils.SimpleTransitionListener
 import com.kirkbushman.largeimageview.sampleapp.utils.doAsync
@@ -31,20 +33,38 @@ class AnimSecondActivity : BaseBackActivity() {
         private const val PARAM_SOURCE = "intent_param_source"
 
         private const val FLAG_USE_COIL = "intent_extra_flag_use_coil2"
+        private const val FLAG_SHARED_ANIM = "intent_extra_flag_shared_anim"
 
         private const val ANIM_DURATION = 300L
 
-        fun start(activity: Activity, imageView: ImageView, thumbUrl: String, sourceUrl: String, useCoil: Boolean = false) {
+        fun start(
+            activity: Activity,
+            imageView: ImageView,
+
+            thumbUrl: String,
+            sourceUrl: String,
+
+            useCoil: Boolean = false,
+            sharedAnim: Boolean = true
+        ) {
+
             val intent = Intent(activity, AnimSecondActivity::class.java)
             intent.putExtra(PARAM_THUMB, thumbUrl)
             intent.putExtra(PARAM_SOURCE, sourceUrl)
             intent.putExtra(FLAG_USE_COIL, useCoil)
+            intent.putExtra(FLAG_SHARED_ANIM, sharedAnim)
 
-            val transitionName = activity.resources.getString(R.string.image_transition_name)
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, imageView, transitionName)
-            val bundle = options.toBundle()
+            if (sharedAnim) {
 
-            activity.startActivity(intent, bundle)
+                val transitionName = activity.resources.getString(R.string.image_transition_name)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, imageView, transitionName)
+                val bundle = options.toBundle()
+
+                activity.startActivity(intent, bundle)
+            } else {
+
+                activity.startActivity(intent)
+            }
         }
     }
 
@@ -52,6 +72,7 @@ class AnimSecondActivity : BaseBackActivity() {
     private val sourceUrl by lazy { intent.getStringExtra(PARAM_SOURCE) }
 
     private val useCoil by lazy { intent.getBooleanExtra(FLAG_USE_COIL, false) }
+    private val sharedAnim by lazy { intent.getBooleanExtra(FLAG_SHARED_ANIM, true) }
 
     private val glide by lazy { Glide.with(this) }
 
@@ -61,17 +82,23 @@ class AnimSecondActivity : BaseBackActivity() {
 
         if (Build.VERSION.SDK_INT >= 21) {
 
-            window.sharedElementEnterTransition.addListener(object : SimpleTransitionListener() {
+            if (sharedAnim) {
 
-                override fun onTransitionEnd(transition: Transition?) {
+                window.sharedElementEnterTransition.addListener(
+                    object : SimpleTransitionListener() {
 
-                    liv.triggerShowImage()
+                        override fun onTransitionEnd(transition: Transition?) {
 
-                    window.sharedElementEnterTransition.removeListener(this)
-                }
-            })
+                            liv.triggerShowImage()
+
+                            window.sharedElementEnterTransition.removeListener(this)
+                        }
+                    }
+                )
+            }
         }
 
+        liv.setShowImageWhenAvailable(!sharedAnim)
         liv.setImageLoader(object : ImageLoader {
 
             override fun getThumbnailView(context: Context): View {
@@ -82,7 +109,7 @@ class AnimSecondActivity : BaseBackActivity() {
                 if (useCoil) {
                     (view as ImageView).load(thumbUrl)
                 } else {
-                    glide.loadThumbnail(thumbUrl, view as ImageView)
+                    glide.loadThumbnail(thumbUrl!!, view as ImageView)
                 }
             }
 
@@ -94,27 +121,45 @@ class AnimSecondActivity : BaseBackActivity() {
 
                 var file: File? = null
 
-                doAsync(doWork = {
+                doAsync(
+                    doWork = {
 
-                    try {
+                        try {
 
-                        file = glide.downloadOnly()
-                            .load(sourceUrl)
-                            .submit()
-                            .get()
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
+                            file = glide.downloadOnly()
+                                .load(sourceUrl)
+                                .submit()
+                                .get()
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    },
+                    onPost = {
+
+                        if (file != null) {
+                            callback.onImageReady(file!!)
+                        } else {
+                            callback.onImageErrored()
+                        }
                     }
-                }, onPost = {
-
-                    if (file != null) {
-                        callback.onImageReady(file!!)
-                    } else {
-                        callback.onImageErrored()
-                    }
-                })
+                )
             }
         })
+
+        liv.setOnViewShownListener(
+            object : OnViewsShownListener {
+
+                override fun onThumbnailViewShown(view: View) {
+                    Log.i("AnimSecondActivity", "onThumbnailViewShown")
+                }
+                override fun onErrorViewShown(view: View) {
+                    Log.i("AnimSecondActivity", "onErrorViewShown")
+                }
+                override fun onImageViewShown(view: SubsamplingScaleImageView) {
+                    Log.i("AnimSecondActivity", "onImageViewShown")
+                }
+            }
+        )
 
         liv.startLoading()
     }
@@ -129,20 +174,23 @@ class AnimSecondActivity : BaseBackActivity() {
                 finishAfterTransition()
             } else {
 
-                ssiv?.scaleMin(ANIM_DURATION, object : SubsamplingScaleImageView.OnAnimationEventListener {
+                ssiv?.scaleMin(
+                    duration = ANIM_DURATION,
+                    listener = object : SubsamplingScaleImageView.OnAnimationEventListener {
 
-                    override fun onComplete() {
-                        finishAfterTransition()
-                    }
+                        override fun onComplete() {
+                            finishAfterTransition()
+                        }
 
-                    override fun onInterruptedByNewAnim() {
-                        finishAfterTransition()
-                    }
+                        override fun onInterruptedByNewAnim() {
+                            finishAfterTransition()
+                        }
 
-                    override fun onInterruptedByUser() {
-                        finishAfterTransition()
+                        override fun onInterruptedByUser() {
+                            finishAfterTransition()
+                        }
                     }
-                })
+                )
             }
         }
     }

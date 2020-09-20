@@ -93,25 +93,28 @@ class LargeImageViewTest {
 
                 var file: File? = null
 
-                doAsync(doWork = {
+                doAsync(
+                    doWork = {
 
-                    try {
+                        try {
 
-                        file = glide.downloadOnly()
-                            .load(URL_SOURCE)
-                            .submit()
-                            .get()
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
+                            file = glide.downloadOnly()
+                                .load(URL_SOURCE)
+                                .submit()
+                                .get()
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    },
+                    onPost = {
+
+                        if (file != null) {
+                            callback.onImageReady(file!!)
+                        } else {
+                            callback.onImageErrored()
+                        }
                     }
-                }, onPost = {
-
-                    if (file != null) {
-                        callback.onImageReady(file!!)
-                    } else {
-                        callback.onImageErrored()
-                    }
-                })
+                )
             }
         })
 
@@ -170,25 +173,28 @@ class LargeImageViewTest {
 
                 var file: File? = null
 
-                doAsync(doWork = {
+                doAsync(
+                    doWork = {
 
-                    try {
+                        try {
 
-                        file = glide.downloadOnly()
-                            .load(ERR_SOURCE)
-                            .submit()
-                            .get()
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
+                            file = glide.downloadOnly()
+                                .load(ERR_SOURCE)
+                                .submit()
+                                .get()
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    },
+                    onPost = {
+
+                        if (file != null) {
+                            callback.onImageReady(file!!)
+                        } else {
+                            callback.onImageErrored()
+                        }
                     }
-                }, onPost = {
-
-                    if (file != null) {
-                        callback.onImageReady(file!!)
-                    } else {
-                        callback.onImageErrored()
-                    }
-                })
+                )
             }
         })
 

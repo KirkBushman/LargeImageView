@@ -16,6 +16,11 @@ interface ImageLoader {
     fun loadThumbnail(view: View)
 
     /**
+     * Receive from the user the view that binds to loadingView
+     */
+    fun getLoadingView(context: Context): View?
+
+    /**
      * Receive from the user the view that binds to errorView
      */
     fun getErrorView(context: Context): View?

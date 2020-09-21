@@ -21,16 +21,23 @@ class AnimFirstActivity : AppCompatActivity() {
         // private const val SOURCE_URL = "https://i.redd.it/9qcfzckaib531.jpg"
 
         private const val FLAG_USE_COIL = "intent_extra_flag_use_coil"
+        private const val FLAG_USE_LOADING = "intent_extra_flag_use_loading"
 
-        fun start(context: Context, useCoil: Boolean = false) {
+        fun start(
+            context: Context,
+            useCoil: Boolean = false,
+            useLoading: Boolean = false
+        ) {
             val intent = Intent(context, AnimFirstActivity::class.java)
             intent.putExtra(FLAG_USE_COIL, useCoil)
+            intent.putExtra(FLAG_USE_LOADING, useLoading)
 
             context.startActivity(intent)
         }
     }
 
     private val useCoil by lazy { intent.getBooleanExtra(FLAG_USE_COIL, false) }
+    private val useLoading by lazy { intent.getBooleanExtra(FLAG_USE_LOADING, false) }
 
     private val glide by lazy { Glide.with(this) }
 
@@ -46,7 +53,19 @@ class AnimFirstActivity : AppCompatActivity() {
 
         thumbnail.setOnClickListener {
 
-            AnimSecondActivity.start(this, thumbnail, THUMB_URL, SOURCE_URL)
+            val thumbUrl = if (useLoading) {
+                null
+            } else {
+                THUMB_URL
+            }
+
+            AnimSecondActivity.start(
+                activity = this,
+                imageView = thumbnail,
+                thumbUrl = thumbUrl,
+                sourceUrl = SOURCE_URL,
+                sharedAnim = !useLoading
+            )
         }
     }
 }

@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
             ImageControlActivity.start(this)
         }
 
+        bttn_loading.setOnClickListener {
+
+            AnimFirstActivity.start(this, useLoading = true)
+        }
+
         bttn_anim.setOnClickListener {
 
             AnimFirstActivity.start(this)

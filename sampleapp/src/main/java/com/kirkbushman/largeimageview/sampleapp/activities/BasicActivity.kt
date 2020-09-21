@@ -50,6 +50,10 @@ class BasicActivity : AppCompatActivity() {
                     .into(view as ImageView)
             }
 
+            override fun getLoadingView(context: Context): View? {
+                return Utils.getLoadingView(context)
+            }
+
             override fun getErrorView(context: Context): View {
                 return Utils.getErrorView(context)
             }
@@ -88,6 +92,10 @@ class BasicActivity : AppCompatActivity() {
 
                 override fun onThumbnailViewShown(view: View) {
                     showToast("Thumbnail Shown!")
+                }
+
+                override fun onLoadingViewShown(view: View) {
+                    showToast("Loading Shown!")
                 }
 
                 override fun onErrorViewShown(view: View) {

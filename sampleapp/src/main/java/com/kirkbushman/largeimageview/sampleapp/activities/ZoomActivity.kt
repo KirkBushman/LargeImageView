@@ -70,6 +70,10 @@ class ZoomActivity : AppCompatActivity() {
                 return Utils.getErrorView(context)
             }
 
+            override fun getLoadingView(context: Context): View? {
+                return Utils.getLoadingView(context)
+            }
+
             override fun preloadSource(callback: ImageReadyCallback) {
 
                 var file: File? = null

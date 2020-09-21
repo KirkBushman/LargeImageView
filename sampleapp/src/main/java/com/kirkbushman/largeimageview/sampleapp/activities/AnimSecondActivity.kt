@@ -9,6 +9,7 @@ import android.transition.Transition
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.core.app.ActivityOptionsCompat
 import coil.load
 import com.bumptech.glide.Glide
@@ -41,7 +42,7 @@ class AnimSecondActivity : BaseBackActivity() {
             activity: Activity,
             imageView: ImageView,
 
-            thumbUrl: String,
+            thumbUrl: String?,
             sourceUrl: String,
 
             useCoil: Boolean = false,
@@ -113,6 +114,10 @@ class AnimSecondActivity : BaseBackActivity() {
                 }
             }
 
+            override fun getLoadingView(context: Context): View? {
+                return ProgressBar(context)
+            }
+
             override fun getErrorView(context: Context): View? {
                 return null
             }
@@ -152,6 +157,9 @@ class AnimSecondActivity : BaseBackActivity() {
                 override fun onThumbnailViewShown(view: View) {
                     Log.i("AnimSecondActivity", "onThumbnailViewShown")
                 }
+                override fun onLoadingViewShown(view: View) {
+                    Log.i("AnimSecondActivity", "onLoadingViewShown")
+                }
                 override fun onErrorViewShown(view: View) {
                     Log.i("AnimSecondActivity", "onErrorViewShown")
                 }
@@ -161,7 +169,11 @@ class AnimSecondActivity : BaseBackActivity() {
             }
         )
 
-        liv.startLoading()
+        liv.startLoading(
+            showThumbnail = thumbUrl != null,
+            showLoading = thumbUrl == null,
+            showSource = true
+        )
     }
 
     override fun doBeforeFinish() {

@@ -11,11 +11,13 @@
 
     <string name="bttn_show_thumb">Show Thumbnail</string>
     <string name="bttn_show_source">Show Source</string>
+    <string name="bttn_show_loading">Show Loading</string>
     <string name="bttn_show_error">Show Error</string>
 
     <string name="bttn_basic">Basic</string>
     <string name="bttn_control">Image Control</string>
     <string name="bttn_zoom">Zoom</string>
+    <string name="bttn_loading">Loading</string>
     <string name="bttn_anim">Animation</string>
     <string name="bttn_anim_coil">Animation-Coil</string>
 </resources>

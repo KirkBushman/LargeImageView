@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.RequestManager
@@ -14,6 +15,11 @@ import com.bumptech.glide.request.RequestOptions
 object Utils {
 
     private const val ERR_MSG = "Something went wrong!"
+
+    fun getLoadingView(context: Context): View {
+
+        return ProgressBar(context)
+    }
 
     fun getErrorView(context: Context): View {
         val errorText = TextView(context)
@@ -34,7 +40,8 @@ fun Context.showToast(string: String) {
 fun RequestManager.loadThumbnail(url: String, imageView: ImageView) {
 
     val options = RequestOptions()
-        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+        .skipMemoryCache(true)
+        .diskCacheStrategy(DiskCacheStrategy.NONE)
         .override(300, 300)
 
     asBitmap()

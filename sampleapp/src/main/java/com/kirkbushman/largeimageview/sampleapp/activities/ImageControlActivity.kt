@@ -45,6 +45,11 @@ class ImageControlActivity : AppCompatActivity() {
             liv.showSourceView()
         }
 
+        bttn_show_loading.setOnClickListener {
+
+            liv.showLoadingView()
+        }
+
         bttn_show_error.setOnClickListener {
 
             liv.showErrorView()
@@ -60,6 +65,10 @@ class ImageControlActivity : AppCompatActivity() {
                 glide.asBitmap()
                     .load(THUMB_URL)
                     .into(view as ImageView)
+            }
+
+            override fun getLoadingView(context: Context): View? {
+                return Utils.getLoadingView(context)
             }
 
             override fun getErrorView(context: Context): View? {

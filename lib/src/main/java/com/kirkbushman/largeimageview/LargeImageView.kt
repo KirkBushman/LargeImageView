@@ -20,15 +20,23 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
 
         const val SHOWING_NOTHING = 0
         const val SHOWING_THUMBNAIL = 1
-        const val SHOWING_ERROR = 2
-        const val SHOWING_SOURCE = 3
+        const val SHOWING_LOADING = 2
+        const val SHOWING_ERROR = 3
+        const val SHOWING_SOURCE = 4
 
-        @IntDef(SHOWING_NOTHING, SHOWING_THUMBNAIL, SHOWING_ERROR, SHOWING_SOURCE)
+        @IntDef(
+            SHOWING_NOTHING,
+            SHOWING_THUMBNAIL,
+            SHOWING_LOADING,
+            SHOWING_ERROR,
+            SHOWING_SOURCE
+        )
         @Retention(AnnotationRetention.SOURCE)
         annotation class State
     }
 
     private var thumbnailView: View? = null
+    private var loadingView: View? = null
     private var errorView: View? = null
     private var sourceView: SubsamplingScaleImageView? = null
 
@@ -55,6 +63,10 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
 
     fun getThumbnailView(): View? {
         return thumbnailView
+    }
+
+    fun getLoadingView(): View? {
+        return loadingView
     }
 
     fun getErrorView(): View? {
@@ -91,7 +103,11 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         showSourceView(false)
     }
 
-    fun startLoading(showThumbnail: Boolean = true, showSource: Boolean = true) {
+    fun startLoading(
+        showThumbnail: Boolean = true,
+        showLoading: Boolean = true,
+        showSource: Boolean = true
+    ) {
 
         clearViews()
 
@@ -108,6 +124,17 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
                     loader.loadThumbnail(thumbView)
 
                     showThumbnailView()
+                }
+            }
+
+            // show the loading view in the meantime,
+            // while the large image is loading in the background.
+            if (showLoading) {
+
+                loadingView = buildLoadingView()
+                loadingView?.let {
+
+                    showLoadingView()
                 }
             }
 
@@ -161,6 +188,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         state = SHOWING_NOTHING
 
         thumbnailView = null
+        loadingView = null
         errorView = null
         sourceView = null
     }
@@ -184,6 +212,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
 
             if (disableOtherViews) {
 
+                loadingView?.visibility = View.GONE
                 errorView?.visibility = View.GONE
                 sourceView?.visibility = View.GONE
             }
@@ -191,6 +220,34 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
             Log.i("LargeImageView", "Showing thumb view")
 
             viewsShownListener?.onThumbnailViewShown(it)
+        }
+    }
+
+    @UiThread
+    fun showLoadingView(disableOtherViews: Boolean = true) {
+
+        if (state == SHOWING_LOADING) {
+            return
+        }
+
+        if (loadingView == null) {
+            loadingView = buildErrorView()
+        }
+
+        loadingView?.let {
+
+            addAndEnableChild(it)
+
+            state = SHOWING_LOADING
+
+            if (disableOtherViews) {
+
+                errorView?.visibility = View.GONE
+                thumbnailView?.visibility = View.GONE
+                sourceView?.visibility = View.GONE
+            }
+
+            viewsShownListener?.onLoadingViewShown(it)
         }
     }
 
@@ -213,6 +270,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
 
             if (disableOtherViews) {
 
+                loadingView?.visibility = View.GONE
                 thumbnailView?.visibility = View.GONE
                 sourceView?.visibility = View.GONE
             }
@@ -241,6 +299,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
             if (disableOtherViews) {
 
                 thumbnailView?.visibility = View.GONE
+                loadingView?.visibility = View.GONE
                 errorView?.visibility = View.GONE
             }
 
@@ -280,6 +339,13 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     private fun buildSourceView(): SubsamplingScaleImageView {
         val view = SubsamplingScaleImageView(context)
         view.id = View.generateViewId()
+
+        return view
+    }
+
+    private fun buildLoadingView(): View? {
+        val view = loader?.getLoadingView(context)
+        view?.id = View.generateViewId()
 
         return view
     }

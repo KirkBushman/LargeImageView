@@ -19,4 +19,9 @@ interface OnViewsShownListener {
      * Called after the error view is attached as children and shown
      */
     fun onErrorViewShown(view: View)
+
+    /**
+     * Called after the loading view is attached as children and shown
+     */
+    fun onLoadingViewShown(view: View)
 }

@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import coil.api.load
+import coil.load
 import com.bumptech.glide.Glide
 import com.kirkbushman.largeimageview.sampleapp.R
 import com.kirkbushman.largeimageview.sampleapp.utils.loadThumbnail

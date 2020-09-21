@@ -57,7 +57,7 @@ dependencies {
     implementation "com.google.android.material:material:$mdc_ver"
 
     implementation "androidx.core:core-ktx:$ktx_ver"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_ver"
@@ -70,7 +70,7 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$test_ver"
     androidTestImplementation "androidx.test:rules:$test_ver"
 
-    androidTestImplementation "androidx.test.ext:junit:1.1.1"
+    androidTestImplementation "androidx.test.ext:junit:$junit_ver"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_ver"
 
     androidTestImplementation "com.github.bumptech.glide:glide:$glide_ver"

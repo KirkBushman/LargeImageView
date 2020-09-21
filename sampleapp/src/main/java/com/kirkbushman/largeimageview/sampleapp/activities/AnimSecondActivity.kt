@@ -10,7 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
-import coil.api.load
+import coil.load
 import com.bumptech.glide.Glide
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.kirkbushman.largeimageview.ImageLoader

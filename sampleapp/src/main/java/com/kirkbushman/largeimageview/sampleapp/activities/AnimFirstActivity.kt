@@ -17,6 +17,8 @@ class AnimFirstActivity : AppCompatActivity() {
         private const val THUMB_URL = "https://preview.redd.it/kgwb58shlp441.jpg?width=320&crop=smart&auto=webp&s=592da75578ac15f59ed762057138d62add0a18d7"
         private const val SOURCE_URL = "https://preview.redd.it/kgwb58shlp441.jpg?auto=webp&s=391b7b139416a8a0d11b5528b13b8e49b124a341"
 
+        // private const val SOURCE_URL = "https://i.redd.it/vbm1ft0gzdo51.jpg"
+
         // private const val THUMB_URL = "https://preview.redd.it/9qcfzckaib531.jpg?width=216&crop=smart&auto=webp&s=63d71098f774fcc0dffe793e563fc7c5139671e4"
         // private const val SOURCE_URL = "https://i.redd.it/9qcfzckaib531.jpg"
 

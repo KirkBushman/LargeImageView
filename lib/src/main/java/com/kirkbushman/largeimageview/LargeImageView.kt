@@ -160,6 +160,9 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
 
                             if (showImageWhenAvailable) {
                                 showSourceView(false)
+
+                                loadingView?.visibility = View.GONE
+                                errorView?.visibility = View.GONE
                             }
                         }
 
@@ -171,6 +174,8 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
                             errorView?.let { _ ->
 
                                 showErrorView(false)
+
+                                loadingView?.visibility = View.GONE
                             }
                         }
                     })

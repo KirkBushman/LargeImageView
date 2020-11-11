@@ -8,7 +8,6 @@ abstract class BaseBackActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == android.R.id.home) {
             onBackPressed()
-            doBeforeFinish()
 
             true
         } else {

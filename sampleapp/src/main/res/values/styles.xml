@@ -9,6 +9,7 @@
     </style>
 
     <style name="TransitionTheme" parent="AppTheme">
+
         <item name="android:windowContentTransitions" tools:targetApi="lollipop">true</item>
     </style>
 

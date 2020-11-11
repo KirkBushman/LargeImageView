@@ -14,9 +14,21 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import java.io.File
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class LargeImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr) {
+class LargeImageView @JvmOverloads constructor(
+
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(
+    context,
+    attrs,
+    defStyleAttr
+) {
 
     companion object {
+
+        const val SHOW_THUMBNAIL_BEFORE = 0
+        const val SHOW_LOADING_BEFORE = 1
 
         const val SHOWING_NOTHING = 0
         const val SHOWING_THUMBNAIL = 1
@@ -47,12 +59,16 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     private var state: Int = SHOWING_NOTHING
 
     private var showImageWhenAvailable: Boolean
+    private var showSourceImage: Boolean
+    private var showWhileLoading: Int = SHOW_LOADING_BEFORE
 
     init {
 
         val typedArray = context.theme.obtainStyledAttributes(attrs, R.styleable.LargeImageView, defStyleAttr, 0)
 
         showImageWhenAvailable = typedArray.getBoolean(R.styleable.LargeImageView_showImageWhenAvailable, true)
+        showSourceImage = typedArray.getBoolean(R.styleable.LargeImageView_showShourceImage, true)
+        showWhileLoading = typedArray.getInt(R.styleable.LargeImageView_showWhileLoading, SHOW_LOADING_BEFORE)
 
         typedArray.recycle()
     }
@@ -90,6 +106,18 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         this.showImageWhenAvailable = showImageWhenAvailable
     }
 
+    fun setShowSourceImage(showSourceImage: Boolean) {
+        this.showSourceImage = showSourceImage
+    }
+
+    fun setShowLoadingWhileWaiting() {
+        this.showWhileLoading = SHOW_LOADING_BEFORE
+    }
+
+    fun setShowThumbnailWhileWaiting() {
+        this.showWhileLoading = SHOW_THUMBNAIL_BEFORE
+    }
+
     fun setOnViewShownListener(viewsShownListener: OnViewsShownListener?) {
         this.viewsShownListener = viewsShownListener
     }
@@ -103,11 +131,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         showSourceView(false)
     }
 
-    fun startLoading(
-        showThumbnail: Boolean = true,
-        showLoading: Boolean = true,
-        showSource: Boolean = true
-    ) {
+    fun startLoading() {
 
         clearViews()
 
@@ -115,7 +139,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
 
             // show the thumbnail in the meantime,
             // while the large image is loading in the background.
-            if (showThumbnail) {
+            if (showWhileLoading == SHOW_THUMBNAIL_BEFORE) {
 
                 // remember to generate view id
                 thumbnailView = buildThumbnailView()
@@ -129,7 +153,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
 
             // show the loading view in the meantime,
             // while the large image is loading in the background.
-            if (showLoading) {
+            if (showWhileLoading == SHOW_LOADING_BEFORE) {
 
                 loadingView = buildLoadingView()
                 loadingView?.let {
@@ -139,7 +163,7 @@ class LargeImageView @JvmOverloads constructor(context: Context, attrs: Attribut
             }
 
             // start loading in the background the real image.
-            if (showSource) {
+            if (showSourceImage) {
 
                 // remember to generate view id
                 sourceView = buildSourceView()

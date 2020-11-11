@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.view.isVisible
 import coil.load
 import com.bumptech.glide.Glide
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -100,6 +101,13 @@ class AnimSecondActivity : BaseBackActivity() {
         }
 
         liv.setShowImageWhenAvailable(!sharedAnim)
+
+        if (thumbUrl != null) {
+            liv.setShowThumbnailWhileWaiting()
+        } else {
+            liv.setShowLoadingWhileWaiting()
+        }
+
         liv.setImageLoader(object : ImageLoader {
 
             override fun getThumbnailView(context: Context): View {
@@ -169,11 +177,7 @@ class AnimSecondActivity : BaseBackActivity() {
             }
         )
 
-        liv.startLoading(
-            showThumbnail = thumbUrl != null,
-            showLoading = thumbUrl == null,
-            showSource = true
-        )
+        liv.startLoading()
     }
 
     override fun doBeforeFinish() {
@@ -181,28 +185,33 @@ class AnimSecondActivity : BaseBackActivity() {
         if (Build.VERSION.SDK_INT >= 21) {
 
             val ssiv = liv.getSsiv()
-            if (ssiv?.scale == ssiv?.minScale) {
+            if (ssiv != null && ssiv.isVisible && !ssiv.minScale.isNaN()) {
 
-                finishAfterTransition()
+                if (ssiv.scale == ssiv.minScale) {
+
+                    finishAfterTransition()
+                } else {
+
+                    ssiv.scaleMin(
+                        duration = ANIM_DURATION,
+                        listener = object : SubsamplingScaleImageView.OnAnimationEventListener {
+
+                            override fun onComplete() {
+                                finishAfterTransition()
+                            }
+
+                            override fun onInterruptedByNewAnim() {
+                                finishAfterTransition()
+                            }
+
+                            override fun onInterruptedByUser() {
+                                finishAfterTransition()
+                            }
+                        }
+                    )
+                }
             } else {
-
-                ssiv?.scaleMin(
-                    duration = ANIM_DURATION,
-                    listener = object : SubsamplingScaleImageView.OnAnimationEventListener {
-
-                        override fun onComplete() {
-                            finishAfterTransition()
-                        }
-
-                        override fun onInterruptedByNewAnim() {
-                            finishAfterTransition()
-                        }
-
-                        override fun onInterruptedByUser() {
-                            finishAfterTransition()
-                        }
-                    }
-                )
+                finishAfterTransition()
             }
         }
     }

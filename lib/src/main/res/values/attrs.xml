@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="LargeImageView">
+        <attr format="boolean" name="showShourceImage" />
         <attr format="boolean" name="showImageWhenAvailable" />
+
+        <attr format="enum" name="showWhileLoading">
+
+            <enum name="showThumbnail" value="0" />
+            <enum name="showLoading" value="1" />
+        </attr>
     </declare-styleable>
 </resources>
